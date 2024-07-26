@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/visitsFragment">
+
+    <fragment
+        android:id="@+id/visitsFragment"
+        android:name="com.example.medicalcard.screens.visits.VisitsFragment"
+        android:label="VisitsFragment" >
+        <action
+            android:id="@+id/action_visitsFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_visitsFragment_to_visitEditFragment"
+            app:destination="@id/visitEditFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.medicalcard.screens.profile.ProfileFragment"
+        android:label="ProfileFragment" />
+    <fragment
+        android:id="@+id/visitEditFragment"
+        android:name="com.example.medicalcard.screens.edit_visit.VisitEditFragment"
+        android:label="fragment_edit_visit"
+        tools:layout="@layout/fragment_edit_visit" >
+
+        <argument
+            android:name="id_visit"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
+    </fragment>
+
+</navigation>

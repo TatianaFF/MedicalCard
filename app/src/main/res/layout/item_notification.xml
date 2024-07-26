@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingEnd="12dp"
+    android:paddingStart="56dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="9 мая," />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_toEndOf="@+id/tv_date"
+        android:layout_toStartOf="@+id/btn_delete"
+        android:layout_centerVertical="true"
+        android:text="23:00" />
+
+    <Button
+        android:id="@+id/btn_delete"
+        style="?attr/materialIconButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/baseline_close_24"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>

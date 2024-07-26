@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".screens.notify_dialog.NotifyDialogFragment">
+
+    <TextView
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Создание уведомления" />
+
+    <Button
+        android:id="@+id/btn_date"
+        style="?attr/materialButtonOutlinedStyle"
+        android:text="10 мая"
+        app:cornerRadius="5dp"
+        app:icon="@drawable/baseline_calendar_month_24"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btn_time"
+        style="?attr/materialButtonOutlinedStyle"
+        android:text="В 09:00"
+        app:cornerRadius="5dp"
+        app:icon="@drawable/baseline_access_time_24"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+<!--    <com.google.android.material.textfield.TextInputLayout-->
+<!--        android:id="@+id/tv_time"-->
+<!--        app:startIconDrawable="@drawable/baseline_access_time_24"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content" >-->
+
+<!--        <com.google.android.material.textfield.TextInputEditText-->
+<!--            android:gravity="center"-->
+<!--            android:text="В 09:00"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"/>-->
+
+<!--    </com.google.android.material.textfield.TextInputLayout>-->
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_gravity="end"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сохранить" />
+
+</LinearLayout>

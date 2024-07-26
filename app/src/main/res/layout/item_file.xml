@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="56dp"
+    android:paddingEnd="12dp">
+
+    <ImageView
+        android:id="@+id/img_file"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/baseline_insert_drive_file_24" />
+
+    <TextView
+        android:id="@+id/tv_file"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:layout_toEndOf="@+id/img_file"
+        android:layout_toStartOf="@+id/btn_download"
+        android:layout_centerVertical="true"
+        android:layout_marginHorizontal="16dp"
+        android:text="Medved.pdf" />
+
+    <Button
+        android:id="@+id/btn_download"
+        style="?attr/materialIconButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/btn_delete"
+        app:icon="@drawable/baseline_download_24" />
+
+    <Button
+        android:id="@+id/btn_delete"
+        style="?attr/materialIconButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        app:icon="@drawable/baseline_close_24" />
+
+</RelativeLayout>
