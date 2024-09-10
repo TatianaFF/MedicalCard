@@ -3,11 +3,9 @@ package com.example.medicalcard.screens.notify_dialog
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
@@ -18,7 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.medicalcard.databinding.FragmentNotifyDialogBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
-import com.example.medicalcard.utils.getDateString
+import com.example.medicalcard.utils.getDateWithDayWeekString
 import com.example.medicalcard.utils.getTimeString
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -26,9 +24,7 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.time.Instant
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.util.Calendar
-import java.util.Locale
 
 
 class NotifyDialogFragment : DialogFragment() {
@@ -117,9 +113,11 @@ class NotifyDialogFragment : DialogFragment() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.dateTimeNotify.collect { dateTimeNotify ->
-                    binding.btnDate.text = getDateString(dateTimeNotify)
-                    binding.btnTime.text = getTimeString(dateTimeNotify)
+                launch {
+                    viewModel.dateTimeNotify.collect { dateTimeNotify ->
+                        binding.btnDate.text = getDateWithDayWeekString(dateTimeNotify.toLocalDate())
+                        binding.btnTime.text = getTimeString(dateTimeNotify)
+                    }
                 }
             }
         }
@@ -135,7 +133,7 @@ class NotifyDialogFragment : DialogFragment() {
                         Instant.now()
                     )
             )
-            setFragmentResult("rk", bundleOf("bk" to dateTime))
+            setFragmentResult(REQUEST_KEY, bundleOf(DATE_TIME to dateTime))
             dismiss()
         }
     }
@@ -143,5 +141,11 @@ class NotifyDialogFragment : DialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val TAG = "NOTIFY_DIALOG"
+        const val REQUEST_KEY = "REQUEST_KEY"
+        const val DATE_TIME = "DATE_TIME"
     }
 }

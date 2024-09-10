@@ -9,11 +9,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.OpenableColumns
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.webkit.MimeTypeMap
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
@@ -31,10 +31,11 @@ import com.example.medicalcard.adapters.NotificationsAdapter
 import com.example.medicalcard.databinding.FragmentEditVisitBinding
 import com.example.medicalcard.screens.BaseFragment
 import com.example.medicalcard.screens.notify_dialog.NotifyDialogFragment
-import com.example.medicalcard.utils.getDateString
+import com.example.medicalcard.utils.getDateWithDayWeekString
 import com.example.medicalcard.utils.getTimeString
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,7 +52,10 @@ class VisitEditFragment : BaseFragment<FragmentEditVisitBinding>() {
     override fun getViewBinding() = FragmentEditVisitBinding.inflate(layoutInflater)
     private val viewModel: VisitEditViewModel by viewModels()
     private val idVisit: Long?
-        get() = arguments?.let { VisitEditFragmentArgs.fromBundle(it).idVisit }?.toLong()
+        get() = arguments?.let { VisitEditFragmentArgs.fromBundle(it).idVisit }?.toLongOrNull()
+
+    private val idProfile: Long?
+        get() = arguments?.let { VisitEditFragmentArgs.fromBundle(it).idProfile }?.toLongOrNull()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,11 +68,11 @@ class VisitEditFragment : BaseFragment<FragmentEditVisitBinding>() {
     private fun setDataVisit() {
         idVisit?.let {
             try {
-                viewModel.setDataVisit(it)
+                viewModel.initData(it)
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
             }
-            binding.tvTitle.text = getString(R.string.edit_fragment_screen)
+            binding.tvTitle.text = getString(R.string.edit_visit_screen)
         }
     }
 
@@ -82,46 +86,94 @@ class VisitEditFragment : BaseFragment<FragmentEditVisitBinding>() {
         initSaveBtn(navController)
         initCloseBtn(navController)
         initDeleteBtn(navController)
+        initAddNotifyBtn()
         initAddFileBtn()
     }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.dateTimeVisit.collect { dateTimeVisit ->
-                    binding.btnDate.text = getDateString(dateTimeVisit)
-                    binding.btnTime.text = getTimeString(dateTimeVisit)
+                launch {
+                    viewModel.dateTimeVisit.collect { dateTimeVisit ->
+                        binding.btnDate.text = getDateWithDayWeekString(dateTimeVisit.toLocalDate())
+                        binding.btnTime.text = getTimeString(dateTimeVisit)
+                    }
                 }
-            }
-        }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.files.collect {
-                    binding.rvFiles.adapter = FilesAdapter(it, ::onClickDeleteFile, ::openPdf, ::downloadFile)
+                launch {
+                    viewModel.dateTimeNotifications.collect { notifications ->
+                        binding.rvNotifications.adapter =
+                            NotificationsAdapter(notifications.map { it.second }, ::onClickDeleteNotify)
+                    }
                 }
-            }
-        }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.nameVisit.collect { name ->
-                    name?.let {
-                        binding.editNameVisit.setText(it)
+                launch {
+                    viewModel.files.collect {
+                        binding.rvFiles.adapter = FilesAdapter(it, ::onClickDeleteFile, ::openPdf, ::downloadFile)
+                    }
+                }
+
+                launch {
+                    viewModel.nameVisit.collect { name ->
+                        name?.let {
+                            binding.editNameVisit.setText(it)
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.commentVisit.collect { comment ->
+                        comment?.let {
+                            binding.editCommentVisit.setText(it)
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.profileVisit.collect { profile ->
+                        profile?.let { p ->
+                            viewModel.profiles.value?.let { profiles ->
+                                binding.spinner.setSelection(profiles.indexOfFirst { p.id == it.id })
+                            }
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.profiles.collect { profiles ->
+                        profiles?.let {
+                            idProfile?.let { id ->
+                                Log.e("idProfile", idProfile.toString())
+                                Log.e("profiles", profiles.toString())
+                                viewModel.setProfileVisit(profiles.first { p -> p.id == id })
+                            }
+
+                            val profileNames = profiles.map { it.name }
+
+                            val adapter = ArrayAdapter(requireContext(), R.layout.item_profile_name, R.id.tv_title, profileNames)
+                            binding.spinner.setAdapter(adapter)
+
+                            binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                                override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                                    viewModel.setProfileVisit(profiles[position])
+                                }
+
+                                override fun onNothingSelected(parent: AdapterView<*>) {}
+                            }
+                        }
                     }
                 }
             }
         }
+    }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.commentVisit.collect { comment ->
-                    comment?.let {
-                        binding.editCommentVisit.setText(it)
-                    }
-                }
-            }
+    private fun onClickDeleteNotify(index: Int) {
+        val notifi = viewModel.dateTimeNotifications.value[index]
+        val id = notifi.first
+        id?.let {
+            viewModel.deleteNotification(Pair(it, notifi.second))
         }
+        viewModel.deleteDateTimeNotifyFromState(index)
     }
 
     private fun onClickDeleteFile(uri: Uri) {
@@ -142,7 +194,7 @@ class VisitEditFragment : BaseFragment<FragmentEditVisitBinding>() {
         try {
             requireContext().startActivity(Intent.createChooser(intent, "Select app"))
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(context, "Приложения для чтения .pdf не найдены", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Приложения для чтения", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -227,9 +279,32 @@ class VisitEditFragment : BaseFragment<FragmentEditVisitBinding>() {
         idVisit?.let {  id ->
             binding.btnDeleteVisit.visibility = View.VISIBLE
             binding.btnDeleteVisit.setOnClickListener {
-                viewModel.deleteVisitById(id)
-                navController.navigateUp()
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Удалить визит")
+                    .setMessage("Вы действительно хотите удалить визит?")
+                    .setNegativeButton("Отмена") { dialog, which ->
+                        dialog.dismiss()
+                    }
+                    .setPositiveButton("Удалить") { dialog, which ->
+                        viewModel.deleteVisitById(id)
+                        navController.navigateUp()
+                    }
+                    .show()
             }
+        }
+    }
+
+    private fun initAddNotifyBtn() {
+        binding.btnAddNotify.setOnClickListener {
+            NotifyDialogFragment().show(parentFragmentManager, NotifyDialogFragment.TAG)
+        }
+
+        setFragmentResultListener(NotifyDialogFragment.REQUEST_KEY) { _, bundle ->
+            val dateTimeNotify = LocalDateTime.ofInstant(
+                Instant.ofEpochSecond(bundle.getLong(NotifyDialogFragment.DATE_TIME)),
+                ZoneId.systemDefault()
+            )
+            viewModel.addDateTimeNotify(null, dateTimeNotify)
         }
     }
 

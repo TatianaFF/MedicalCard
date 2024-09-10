@@ -16,5 +16,7 @@ data class VisitEntity(
     val comment: String? = null,
     @TypeConverters(Converters::class)
     @ColumnInfo(name = "file_paths")
-    val filesPaths: List<String>? = null
+    val filesPaths: List<String>? = null,
+    @ColumnInfo(name = "profile_id")
+    val profileId: Long
 )

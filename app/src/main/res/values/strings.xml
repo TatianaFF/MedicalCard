@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">MedicalCard</string>
     <string name="visits_screen">Визиты</string>
-    <string name="edit_fragment_screen">Редактирование визита</string>
-    <string name="create_fragment_screen">Создание визита</string>
+    <string name="profile_screen">Профиль</string>
+    <string name="notifications_screen">Уведомления</string>
+    <string name="edit_visit_screen">Редактирование визита</string>
+    <string name="create_viist_screen">Создание визита</string>
+    <string name="create_profile_screen">Создание профиля</string>
+    <string name="edit_profile_screen">Редактирование профиля</string>
+    <string name="welcome">Добро пожаловать!</string>
 </resources>

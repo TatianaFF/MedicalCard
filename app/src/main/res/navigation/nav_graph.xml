@@ -10,16 +10,19 @@
         android:name="com.example.medicalcard.screens.visits.VisitsFragment"
         android:label="VisitsFragment" >
         <action
-            android:id="@+id/action_visitsFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            android:id="@+id/action_visitsFragment_to_notificationsFragment"
+            app:destination="@id/notificationsFragment" />
         <action
             android:id="@+id/action_visitsFragment_to_visitEditFragment"
             app:destination="@id/visitEditFragment" />
+        <action
+            android:id="@+id/action_visitsFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
     </fragment>
     <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.example.medicalcard.screens.profile.ProfileFragment"
-        android:label="ProfileFragment" />
+        android:id="@+id/notificationsFragment"
+        android:name="com.example.medicalcard.screens.notifications.NotificationsFragment"
+        android:label="NotificationsFragment" />
     <fragment
         android:id="@+id/visitEditFragment"
         android:name="com.example.medicalcard.screens.edit_visit.VisitEditFragment"
@@ -32,6 +35,24 @@
             app:nullable="true"
             android:defaultValue="@null"/>
 
+        <argument
+            android:name="id_profile"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+
+    </fragment>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.medicalcard.screens.edit_profile.ProfileEditFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" >
+
+        <argument
+            android:name="id_profile"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
     </fragment>
 
 </navigation>

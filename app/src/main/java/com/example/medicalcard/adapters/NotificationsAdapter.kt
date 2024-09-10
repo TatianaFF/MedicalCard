@@ -1,10 +1,11 @@
 package com.example.medicalcard.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.medicalcard.databinding.ItemNotificationBinding
-import com.example.medicalcard.utils.getDateString
+import com.example.medicalcard.utils.getDateWithDayWeekString
 import com.example.medicalcard.utils.getTimeString
 import java.time.LocalDateTime
 
@@ -21,10 +22,11 @@ class NotificationsAdapter(
         return ViewHolder(binding)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder) {
             with(ldt[position]){
-                binding.tvDate.text = getDateString(this)
+                binding.tvDate.text = getDateWithDayWeekString(this.toLocalDate())
                 binding.tvTime.text = getTimeString(this)
                 binding.btnDelete.setOnClickListener {
                     onClickDeleteNotification(position)

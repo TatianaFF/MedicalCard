@@ -1,30 +1,30 @@
 package com.example.medicalcard.utils
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 
-fun getDateString(date: LocalDateTime): String {
-    val days = arrayOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс")
-    val months = arrayOf(
-        "Января",
-        "Февраля",
-        "Марта",
-        "Апреля",
-        "Мая",
-        "Июня",
-        "Июля",
-        "Августа",
-        "Сентября",
-        "Октября",
-        "Ноября",
-        "Декабря"
-    )
-    return "${days[date.dayOfWeek.value - 1]}, ${date.dayOfMonth} ${months[date.monthValue - 1]} ${date.year} г."
-}
+private val months = arrayOf(
+    "Января",
+    "Февраля",
+    "Марта",
+    "Апреля",
+    "Мая",
+    "Июня",
+    "Июля",
+    "Августа",
+    "Сентября",
+    "Октября",
+    "Ноября",
+    "Декабря"
+)
 
-fun getTimeString(date: LocalDateTime): String {
-    val hours: String =
-        if (date.hour.toString().length == 1) "0${date.hour}" else date.hour.toString()
-    val minutes: String =
-        if (date.minute.toString().length == 1) "0${date.minute}" else date.minute.toString()
-    return "$hours:$minutes"
-}
+private val days = arrayOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс")
+
+fun getDateWithDayWeekString(date: LocalDate): String = "${days[date.dayOfWeek.value - 1]}, ${getDateString(date)}"
+
+fun getDateShort(date: LocalDate): String = "${formatWithZero(date.dayOfMonth)}.${formatWithZero(date.monthValue)}.${formatWithZero(date.year)} г."
+
+fun getTimeString(date: LocalDateTime): String = "${formatWithZero(date.hour)}:${formatWithZero(date.minute)}"
+
+fun getDateString(date: LocalDate): String = "${date.dayOfMonth} ${months[date.monthValue - 1]} ${date.year} г."
+private fun formatWithZero(num: Int): String = if (num.toString().length == 1) "0$num" else "$num"
